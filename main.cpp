@@ -5,6 +5,7 @@ int main(){
 	const int screenW = 800;
 	const int screenH = 450;
 
+
 	InitWindow(screenW, screenH, "GOTY");
 	SetTargetFPS(60);
 
@@ -12,14 +13,18 @@ int main(){
 	Rectangle recSource = {0, 0, (float)target.texture.width, (float)-target.texture.height};
 	
 	Texture2D schar = LoadTexture("Sprites/ScharWalk.png");
-	Vector2 scharPos = {screenW/3.0f, screenH/2.0f};
+	Vector2 scharPos = {screenW/3.0f, screenH/2.0f -schar.height};
 	Rectangle scharAnim{ 0 , 0, (float)schar.width/4, (float)schar.height};
 	int scharSpeed = 2;
 	int jumpSpeed = 0;	
 
+	float groundPos = scharPos.y;
+
 	bool scharWalking = false;
 	bool scharCanJump = false;
 	bool punch = false;
+	bool isRight = true;
+	bool isLeft = false;
 
 	int currentFrame = 0;
 	int frameCounter = 0;
@@ -36,6 +41,10 @@ int main(){
 		
 		Rectangle punchCol = {(scharPos.x + ((float)scharAnim.width/2)), (scharPos.y + ((float)scharAnim.height/1.5f)), 50, 15};
 
+		if(isRight) punchCol.x = scharPos.x + ((float)scharAnim.width/2);
+		if(isLeft) punchCol.x = (scharPos.x - ((float)scharAnim.width/2)) - 50;
+
+
 		if(IsKeyPressed(KEY_F)){
 		
 			punch = true;
@@ -49,13 +58,18 @@ int main(){
 
 			scharWalking = true;
 			scharAnim.width = (float)-schar.width/4;
-			punchCol.x = -(scharPos.x + ((float)scharAnim.width/2));
+			isRight = false;
+			isLeft = true;
+			//punchCol.x = (scharPos.x - ((float)scharAnim.width/2)) - 50;
 			scharPos.x -= scharSpeed;
 
   		}else if(IsKeyDown(KEY_D)){
 
 			scharWalking = true;
 			scharAnim.width = (float)schar.width/4;
+			isRight = true;
+			isLeft = false;
+			//punchCol.x = scharPos.x + ((float)scharAnim.width/2);
 			scharPos.x += scharSpeed;
 
 		}else{
@@ -66,26 +80,28 @@ int main(){
 
 		}
 
+		if(scharPos.y == groundPos){
+
+			jumpSpeed = 0;
+			scharPos.y = groundPos;
+			scharCanJump = true;
+
+		}else scharCanJump = false;
+	
+
 		if(IsKeyDown(KEY_SPACE) && scharCanJump){
 		
-			jumpSpeed = -250*delta;
+			jumpSpeed = 65;
 			scharPos.y += jumpSpeed;
-
-		}else{
-
-			jumpSpeed = 300*delta;
-			scharCanJump = false;
-
 
 		}
 
-		if(scharPos.y >= (float)screenH/2){
-	
-			scharCanJump = true;
-			jumpSpeed = 0;
+		if(!scharCanJump){
 
-		}else if(scharPos.y <= 100) scharCanJump = false;
-	
+			jumpSpeed = 1;
+			
+		}
+
 		if(frameCounter >= 60/frameSpeed && scharWalking){
 
   			frameCounter = 0;

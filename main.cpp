@@ -13,7 +13,7 @@ int main(){
 	Rectangle recSource = {0, 0, (float)target.texture.width, (float)-target.texture.height};
 	
 	Texture2D schar = LoadTexture("Sprites/ScharWalk.png");
-	Vector2 scharPos = {screenW/3.0f, screenH/2.0f -schar.height};
+	Vector2 scharPos = {screenW/3.0f, screenH/2.0f};
 	Rectangle scharAnim{ 0 , 0, (float)schar.width/4, (float)schar.height};
 	int scharSpeed = 2;
 	int jumpSpeed = 0;	
@@ -89,9 +89,9 @@ int main(){
 		}else scharCanJump = false;
 	
 
-		if(IsKeyDown(KEY_SPACE) && scharCanJump){
+		if(IsKeyPressed(KEY_SPACE) && scharCanJump){
 		
-			jumpSpeed = 65;
+			jumpSpeed = -15;
 			scharPos.y += jumpSpeed;
 
 		}
